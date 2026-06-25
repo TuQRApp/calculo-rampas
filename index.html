@@ -213,7 +213,7 @@
 
   <div class="input-section">
     <label for="h">Altura a subir</label>
-    <input type="text" id="h" inputmode="decimal" placeholder="ej: 1,50">
+    <input type="text" id="h" inputmode="decimal" placeholder="ej: 1,50" value="1">
     <span class="input-unit">m</span>
     <button id="btn-calcular" onclick="render()">Calcular</button>
   </div>
@@ -337,6 +337,7 @@
   }
 
   document.getElementById('h').addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
+  render();
 </script>
 </body>
 </html>
