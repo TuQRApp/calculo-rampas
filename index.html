@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculo de rampas</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      padding: 36px 40px 40px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .header { margin-bottom: 28px; }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: #666;
+    }
+
+    .formula-badge {
+      display: inline-block;
+      margin-top: 8px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .input-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #fffbeb;
+      border: 1.5px solid #f59e0b;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+
+    .input-section label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .input-section input[type="number"] {
+      width: 110px;
+      padding: 8px 12px;
+      border: 1.5px solid #f59e0b;
+      border-radius: 6px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      background: #fff;
+      color: #1a1a2e;
+      outline: none;
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+    .input-section input[type="number"]:focus {
+      border-color: #d97706;
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+    }
+    .input-section input::-webkit-outer-spin-button,
+    .input-section input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .input-unit { color: #888; font-size: 0.9rem; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    thead tr {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    thead th {
+      padding: 11px 14px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    thead th:first-child { text-align: center; }
+
+    tbody tr:nth-child(even) { background: #f8f9fb; }
+    tbody tr:hover { background: #eef2ff; }
+
+    tbody td {
+      padding: 9px 14px;
+      text-align: center;
+      border-bottom: 1px solid #e8e8e8;
+      white-space: nowrap;
+    }
+
+    td.no-puede {
+      color: #dc2626;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    tr.best-row {
+      background: #dcfce7 !important;
+      font-weight: 700;
+    }
+    tr.best-row td { color: #166534; }
+
+    .tfoot-row td {
+      padding: 10px 14px;
+      background: #f1f5f9;
+      font-weight: 700;
+      border-top: 2px solid #cbd5e1;
+      color: #334155;
+    }
+
+    .min-label {
+      text-align: right !important;
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: #888;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>Cálculo de rampas</h1>
+    <div class="subtitle">Rampas Art. 4.1.7 OGUC</div>
+    <span class="formula-badge">i% = 12,8 − 0,5333 · L</span>
+  </div>
+
+  <div class="input-section">
+    <label for="h">Altura a subir</label>
+    <input type="number" id="h" value="2" min="0.01" step="0.01">
+    <span class="input-unit">m</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>Cant.<br>tramos</th>
+          <th>h tramo<br>(m)</th>
+          <th>Largo tramo<br>(m)</th>
+          <th>Pendiente tramo<br>(i%)</th>
+          <th>Largo rampa<br>(m)</th>
+          <th>Cant.<br>descansos</th>
+          <th>Largo<br>descansos (m)</th>
+          <th>Largo total<br>(m)</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot id="tfoot"></tfoot>
+    </table>
+  </div>
+
+  <div class="note">
+    Descanso fijo: 1,50 m por descanso · Fórmula: resolución cuadrática de 0,5333·L² − 12,8·L + 100·h_tramo = 0 · Art. 4.1.7 OGUC
+  </div>
+</div>
+
+<script>
+  const LARGO_DESCANSO = 1.50;
+
+  function calcRow(n, h) {
+    const hTramo = h / n;
+    // Quadratic: (0.5333/100)*L^2 - (12.8/100)*L + hTramo = 0
+    const a = 0.5333 / 100;
+    const b = -12.8 / 100;
+    const c = hTramo;
+    const disc = b * b - 4 * a * c;
+    if (disc < 0) return null;
+    // take the root that gives valid (positive) slope
+    const L = (-b - Math.sqrt(disc)) / (2 * a);
+    if (L <= 0) return null;
+    const pendiente = 12.8 - 0.5333 * L;
+    if (pendiente <= 0) return null;
+    const largoRampa = n * L;
+    const cantDescansos = n - 1;
+    const largoDescansos = cantDescansos * LARGO_DESCANSO;
+    const largoTotal = largoRampa + largoDescansos;
+    return { hTramo, L, pendiente, largoRampa, cantDescansos, largoDescansos, largoTotal };
+  }
+
+  function fmt(v, dec = 2) {
+    return v.toFixed(dec).replace('.', ',');
+  }
+
+  function render() {
+    const h = parseFloat(document.getElementById('h').value);
+    if (!h || h <= 0) return;
+
+    const rows = [];
+    for (let n = 1; n <= 10; n++) {
+      rows.push({ n, result: calcRow(n, h) });
+    }
+
+    // find best (minimum largo total among valid rows)
+    let minTotal = Infinity, bestN = -1;
+    rows.forEach(({ n, result }) => {
+      if (result && result.largoTotal < minTotal) {
+        minTotal = result.largoTotal;
+        bestN = n;
+      }
+    });
+
+    const tbody = document.getElementById('tbody');
+    const tfoot = document.getElementById('tfoot');
+    tbody.innerHTML = '';
+    tfoot.innerHTML = '';
+
+    rows.forEach(({ n, result }) => {
+      const tr = document.createElement('tr');
+      if (n === bestN) tr.className = 'best-row';
+
+      if (!result) {
+        tr.innerHTML = `
+          <td>${n}</td>
+          <td>${fmt(h / n)}</td>
+          <td class="no-puede">no se puede</td>
+          <td>—</td><td>—</td>
+          <td>${n - 1}</td>
+          <td>${fmt((n - 1) * LARGO_DESCANSO)}</td>
+          <td>—</td>
+        `;
+      } else {
+        const { hTramo, L, pendiente, largoRampa, cantDescansos, largoDescansos, largoTotal } = result;
+        tr.innerHTML = `
+          <td>${n}</td>
+          <td>${fmt(hTramo)}</td>
+          <td>${fmt(L)}</td>
+          <td>${fmt(pendiente)}</td>
+          <td>${fmt(largoRampa)}</td>
+          <td>${cantDescansos}</td>
+          <td>${fmt(largoDescansos)}</td>
+          <td><strong>${fmt(largoTotal)}</strong></td>
+        `;
+      }
+      tbody.appendChild(tr);
+    });
+
+    if (bestN > 0) {
+      tfoot.innerHTML = `
+        <tr class="tfoot-row">
+          <td colspan="7" class="min-label">LARGO TOTAL MÍNIMO</td>
+          <td><strong>${fmt(minTotal)}</strong></td>
+        </tr>
+      `;
+    }
+  }
+
+  document.getElementById('h').addEventListener('input', render);
+  render();
+</script>
+</body>
+</html>
