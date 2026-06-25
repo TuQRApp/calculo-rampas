@@ -286,6 +286,7 @@
     const h = parseFloat(raw);
     input.classList.toggle('invalid', !h || h <= 0);
     if (!h || h <= 0) return;
+    gtag('event', 'click_calcular', { altura_metros: h });
 
     const rows = [];
     for (let n = 1; n <= 10; n++) {
