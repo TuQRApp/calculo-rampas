@@ -119,6 +119,20 @@
 
     .input-unit { color: #888; font-size: 0.9rem; }
 
+    #btn-calcular {
+      padding: 8px 20px;
+      background: #1a1a2e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #btn-calcular:hover { background: #2d2d4e; }
+    #btn-calcular:active { background: #111122; }
+
     .table-wrap { overflow-x: auto; }
 
     table {
@@ -199,8 +213,9 @@
 
   <div class="input-section">
     <label for="h">Altura a subir</label>
-    <input type="text" id="h" value="2" inputmode="decimal" placeholder="ej: 1,50">
+    <input type="text" id="h" inputmode="decimal" placeholder="ej: 1,50">
     <span class="input-unit">m</span>
+    <button id="btn-calcular" onclick="render()">Calcular</button>
   </div>
 
   <div class="scroll-hint">
@@ -321,8 +336,7 @@
     }
   }
 
-  document.getElementById('h').addEventListener('input', render);
-  render();
+  document.getElementById('h').addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
 </script>
 </body>
 </html>
