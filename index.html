@@ -268,7 +268,7 @@
     const L = (-b - Math.sqrt(disc)) / (2 * a);
     if (L <= 0) return null;
     const pendiente = 12.8 - 0.5333 * L;
-    if (pendiente <= 0) return null;
+    if (pendiente < 12) return null;
     const largoRampa = n * L;
     const cantDescansos = n - 1;
     const largoDescansos = cantDescansos * LARGO_DESCANSO;
