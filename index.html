@@ -71,8 +71,8 @@
       white-space: nowrap;
     }
 
-    .input-section input[type="number"] {
-      width: 110px;
+    .input-section input#h {
+      width: 165px;
       padding: 8px 12px;
       border: 1.5px solid #f59e0b;
       border-radius: 6px;
@@ -82,14 +82,27 @@
       color: #1a1a2e;
       outline: none;
       text-align: center;
-      -moz-appearance: textfield;
     }
-    .input-section input[type="number"]:focus {
+    .input-section input#h:focus {
       border-color: #d97706;
       box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
     }
-    .input-section input::-webkit-outer-spin-button,
-    .input-section input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .input-section input#h.invalid {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .card { padding: 24px 16px 28px; border-radius: 8px; }
+      h1 { font-size: 1.35rem; }
+      .input-section { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
+      .input-section input#h { width: 100%; }
+      table { font-size: 0.75rem; }
+      thead th { padding: 8px 8px; font-size: 0.7rem; }
+      tbody td { padding: 7px 8px; }
+      .tfoot-row td { padding: 8px; font-size: 0.8rem; }
+    }
 
     .input-unit { color: #888; font-size: 0.9rem; }
 
@@ -173,7 +186,7 @@
 
   <div class="input-section">
     <label for="h">Altura a subir</label>
-    <input type="number" id="h" value="2" min="0.01" step="0.01">
+    <input type="text" id="h" value="2" inputmode="decimal" placeholder="ej: 1,50">
     <span class="input-unit">m</span>
   </div>
 
@@ -229,7 +242,10 @@
   }
 
   function render() {
-    const h = parseFloat(document.getElementById('h').value);
+    const input = document.getElementById('h');
+    const raw = input.value.replace(',', '.');
+    const h = parseFloat(raw);
+    input.classList.toggle('invalid', !h || h <= 0);
     if (!h || h <= 0) return;
 
     const rows = [];
