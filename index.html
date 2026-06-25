@@ -346,6 +346,9 @@
   }
 
   document.getElementById('h').addEventListener('keydown', e => { if (e.key === 'Enter') render(); });
+  document.getElementById('btn-calcular').addEventListener('click', () => {
+  gtag('event', 'click_calcular_rampa');
+});
   render();
 </script>
 </body>
