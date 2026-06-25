@@ -92,6 +92,16 @@
       box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
     }
 
+    .scroll-hint {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .scroll-hint svg { flex-shrink: 0; }
+
     @media (max-width: 480px) {
       body { padding: 16px 10px; }
       .card { padding: 20px 14px 24px; border-radius: 8px; }
@@ -100,13 +110,11 @@
       .formula-badge { font-size: 0.78rem; padding: 3px 10px; }
       .input-section { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
       .input-section label { font-size: 0.88rem; }
-      table { font-size: 0.78rem; }
+      table { font-size: 0.75rem; }
       thead th { padding: 8px 6px; font-size: 0.68rem; white-space: normal; line-height: 1.3; }
       tbody td { padding: 7px 6px; }
       .tfoot-row td { padding: 8px 6px; font-size: 0.78rem; }
-      .note { font-size: 0.72rem; }
-      /* ocultar columnas secundarias en retrato */
-      .col-h-tramo, .col-cant-desc, .col-largo-desc { display: none; }
+      .scroll-hint { display: flex; }
     }
 
     .input-unit { color: #888; font-size: 0.9rem; }
@@ -195,17 +203,21 @@
     <span class="input-unit">m</span>
   </div>
 
+  <div class="scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    Desliza para ver toda la tabla
+  </div>
   <div class="table-wrap">
     <table id="tabla">
       <thead>
         <tr>
           <th>Cant.<br>tramos</th>
-          <th class="col-h-tramo">h tramo<br>(m)</th>
+          <th>h tramo<br>(m)</th>
           <th>Largo tramo<br>(m)</th>
-          <th>Pendiente<br>(i%)</th>
+          <th>Pendiente tramo<br>(i%)</th>
           <th>Largo rampa<br>(m)</th>
-          <th class="col-cant-desc">Cant.<br>descansos</th>
-          <th class="col-largo-desc">Largo<br>descansos (m)</th>
+          <th>Cant.<br>descansos</th>
+          <th>Largo<br>descansos (m)</th>
           <th>Largo total<br>(m)</th>
         </tr>
       </thead>
@@ -214,9 +226,6 @@
     </table>
   </div>
 
-  <div class="note">
-    Descanso fijo: 1,50 m por descanso · Fórmula: resolución cuadrática de 0,5333·L² − 12,8·L + 100·h_tramo = 0 · Art. 4.1.7 OGUC
-  </div>
 </div>
 
 <script>
@@ -279,23 +288,23 @@
       if (!result) {
         tr.innerHTML = `
           <td>${n}</td>
-          <td class="col-h-tramo">${fmt(h / n)}</td>
+          <td>${fmt(h / n)}</td>
           <td class="no-puede">no se puede</td>
           <td>—</td><td>—</td>
-          <td class="col-cant-desc">${n - 1}</td>
-          <td class="col-largo-desc">${fmt((n - 1) * LARGO_DESCANSO)}</td>
+          <td>${n - 1}</td>
+          <td>${fmt((n - 1) * LARGO_DESCANSO)}</td>
           <td>—</td>
         `;
       } else {
         const { hTramo, L, pendiente, largoRampa, cantDescansos, largoDescansos, largoTotal } = result;
         tr.innerHTML = `
           <td>${n}</td>
-          <td class="col-h-tramo">${fmt(hTramo)}</td>
+          <td>${fmt(hTramo)}</td>
           <td>${fmt(L)}</td>
           <td>${fmt(pendiente)}</td>
           <td>${fmt(largoRampa)}</td>
-          <td class="col-cant-desc">${cantDescansos}</td>
-          <td class="col-largo-desc">${fmt(largoDescansos)}</td>
+          <td>${cantDescansos}</td>
+          <td>${fmt(largoDescansos)}</td>
           <td><strong>${fmt(largoTotal)}</strong></td>
         `;
       }
