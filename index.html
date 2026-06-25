@@ -258,17 +258,22 @@
 
   function calcRow(n, h) {
     const hTramo = h / n;
-    // Quadratic: (0.5333/100)*L^2 - (12.8/100)*L + hTramo = 0
-    const a = 0.5333 / 100;
-    const b = -12.8 / 100;
-    const c = hTramo;
-    const disc = b * b - 4 * a * c;
-    if (disc < 0) return null;
-    // take the root that gives valid (positive) slope
-    const L = (-b - Math.sqrt(disc)) / (2 * a);
-    if (L <= 0) return null;
-    const pendiente = 12.8 - 0.5333 * L;
-    if (pendiente < 12) return null;
+    let L, pendiente;
+    if (h < 0.18) {
+      pendiente = 12;
+      L = (hTramo * 100) / 12;
+    } else {
+      // Quadratic: (0.5333/100)*L^2 - (12.8/100)*L + hTramo = 0
+      const a = 0.5333 / 100;
+      const b = -12.8 / 100;
+      const c = hTramo;
+      const disc = b * b - 4 * a * c;
+      if (disc < 0) return null;
+      L = (-b - Math.sqrt(disc)) / (2 * a);
+      if (L <= 0) return null;
+      pendiente = 12.8 - 0.5333 * L;
+      if (pendiente <= 0) return null;
+    }
     const largoRampa = n * L;
     const cantDescansos = n - 1;
     const largoDescansos = cantDescansos * LARGO_DESCANSO;
